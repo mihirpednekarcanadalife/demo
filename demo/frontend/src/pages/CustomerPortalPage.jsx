@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchCases } from "../api/caseApi";
 import { MOCK_CREDENTIALS_HINT, signIn } from "../auth/mockAuth";
+import CaseJourneyPanel from "../components/CaseJourneyPanel";
 import PensionProjectionPage from "./PensionProjectionPage";
 
 function statusClass(status) {
@@ -65,7 +66,7 @@ export default function CustomerPortalPage() {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
-  const [selectedPolicyId, setSelectedPolicyId] = useState(null);
+  const [selected, setSelected] = useState(null);
 
   const loadCases = useCallback(async (owner) => {
     try {
@@ -102,7 +103,7 @@ export default function CustomerPortalPage() {
   function handleSignOut() {
     setUser(null);
     setCases([]);
-    setSelectedPolicyId(null);
+    setSelected(null);
     setAuthError("");
   }
 
@@ -116,12 +117,20 @@ export default function CustomerPortalPage() {
     );
   }
 
-  if (selectedPolicyId) {
+  if (selected) {
     return (
       <PensionProjectionPage
-        policyId={selectedPolicyId}
-        onBack={() => setSelectedPolicyId(null)}
-      />
+        policyId={selected.policyId}
+        onBack={() => {
+          setSelected(null);
+          loadCases(user.username);
+        }}
+      >
+        <CaseJourneyPanel
+          caseId={selected.caseId}
+          onChanged={() => loadCases(user.username)}
+        />
+      </PensionProjectionPage>
     );
   }
 
@@ -130,7 +139,10 @@ export default function CustomerPortalPage() {
       <div className="portal-header">
         <div>
           <h1>Welcome, {user.username}</h1>
-          <p>Cases registered to your account. Select a policy to view its fund projection.</p>
+          <p>
+            Cases registered to your account. Select a policy to view its fund projection and
+            complete your retirement options.
+          </p>
         </div>
         <button type="button" onClick={handleSignOut}>
           Sign out
@@ -180,7 +192,7 @@ export default function CustomerPortalPage() {
                           className="policy-link"
                           onClick={(event) => {
                             event.preventDefault();
-                            setSelectedPolicyId(item.policyId);
+                            setSelected({ policyId: item.policyId, caseId: item.caseId });
                           }}
                         >
                           {item.policyId}

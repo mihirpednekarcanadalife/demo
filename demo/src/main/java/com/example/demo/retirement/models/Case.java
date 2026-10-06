@@ -1,6 +1,8 @@
 package com.example.demo.retirement.models;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A retirement journey case tracked by the back-office.
@@ -19,6 +21,10 @@ public class Case {
     private OwnerType ownerType;
     /** Routing mailbox derived from {@link #ownerType}. */
     private String email;
+    /** Maturity option chosen by the customer in the portal. */
+    private MaturityOption maturityOption;
+    /** Documents the customer has uploaded so far. */
+    private final List<RequiredDocument> uploadedDocuments = new ArrayList<>();
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -113,6 +119,33 @@ public class Case {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public MaturityOption getMaturityOption() {
+        return maturityOption;
+    }
+
+    public void setMaturityOption(MaturityOption maturityOption) {
+        this.maturityOption = maturityOption;
+    }
+
+    public List<RequiredDocument> getUploadedDocuments() {
+        return uploadedDocuments;
+    }
+
+    public void setUploadedDocuments(List<RequiredDocument> documents) {
+        this.uploadedDocuments.clear();
+        if (documents != null) {
+            this.uploadedDocuments.addAll(documents);
+        }
+    }
+
+    /** @return {@code true} when the document was newly added. */
+    public boolean addUploadedDocument(RequiredDocument document) {
+        if (document == null || uploadedDocuments.contains(document)) {
+            return false;
+        }
+        return uploadedDocuments.add(document);
     }
 
     public Instant getCreatedAt() {

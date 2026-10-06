@@ -52,13 +52,13 @@ class RetirementJourneyJobIntegrationTest {
         assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
         assertThat(execution.getStepExecutions())
                 .extracting("stepName")
-                .containsExactly("maturityAssessmentStep", "ownerDetectionStep");
+                .containsExactly("maturityAssessmentStep", "ownerDetectionStep", "maturityPackageEmailStep");
 
-        // Step 1 created the case, step 2 classified it.
+        // Step 1 created the case, step 2 classified it, step 3 emailed the package.
         Case linked = caseService.getCaseByPolicyId("POL-BATCH-1");
-        assertThat(linked.getCaseStatus()).isEqualTo(CaseStatus.CLE_OWNER_DETECTED);
         assertThat(linked.getOwnerType()).isEqualTo(OwnerType.CLE);
         assertThat(linked.getEmail()).isEqualTo("cle@cle.com");
+        assertThat(linked.getCaseStatus()).isEqualTo(CaseStatus.MATURITY_PACKAGE_SENT);
     }
 
     @Test
@@ -87,6 +87,18 @@ class RetirementJourneyJobIntegrationTest {
         assertThat(caseService.getAllCases())
                 .filteredOn(c -> "POL-BATCH-REPEAT".equals(c.getPolicyId()))
                 .hasSize(1);
+    }
+
+    @Test
+    void maturityPackageEmailStepCanRunInIsolation() {
+        caseService.createCase(new CaseRequest("Standalone email", CaseStatus.NON_CLE_OWNER_DETECTED,
+                "30d", "advisor-42", "desc", "POL-BATCH-EMAIL"));
+
+        JobExecution execution = jobLauncherTestUtils.launchStep("maturityPackageEmailStep", uniqueParameters());
+
+        assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        assertThat(caseService.getCaseByPolicyId("POL-BATCH-EMAIL").getCaseStatus())
+                .isEqualTo(CaseStatus.MATURITY_PACKAGE_SENT);
     }
 
     @Test

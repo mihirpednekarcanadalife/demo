@@ -3,19 +3,22 @@ import ComparisonPage from "./pages/ComparisonPage";
 import RetirementJourneyPage from "./pages/RetirementJourneyPage";
 import CaseWorkflowPage from "./pages/CaseWorkflowPage";
 import CustomerPortalPage from "./pages/CustomerPortalPage";
+import EmailPage from "./pages/EmailPage";
 
 const TABS = [
   { id: "compare", label: "Compare products" },
   { id: "journey", label: "Retirement journey" },
   { id: "cases", label: "Case workflow" },
-  { id: "portal", label: "Customer portal" }
+  { id: "portal", label: "Customer portal" },
+  { id: "email", label: "Email" }
 ];
 
 const PAGES = {
   compare: ComparisonPage,
   journey: RetirementJourneyPage,
   cases: CaseWorkflowPage,
-  portal: CustomerPortalPage
+  portal: CustomerPortalPage,
+  email: EmailPage
 };
 
 export default function App() {
@@ -37,7 +40,8 @@ export default function App() {
         ))}
       </nav>
 
-      <ActivePage />
+      <ActivePage onNavigate={setActiveTab} />
+
     </main>
   );
 }

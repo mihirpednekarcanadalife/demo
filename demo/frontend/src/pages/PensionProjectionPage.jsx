@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchPolicy } from "../api/policyApi";
 import { buildMockProjection, formatEuros } from "../mock/pensionProjection";
 
-export default function PensionProjectionPage({ policyId, onBack }) {
+export default function PensionProjectionPage({ policyId, onBack, children }) {
   const [policy, setPolicy] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState("");
@@ -41,7 +41,7 @@ export default function PensionProjectionPage({ policyId, onBack }) {
         &larr; Back to my cases
       </button>
 
-      <h1>Pension fund projection</h1>
+      <h1>Your policy {policyId}</h1>
       <p>
         Illustrative projection for policy <strong>{policyId}</strong>. Figures are mock values for
         demonstration and are not a statement of benefits.
@@ -50,8 +50,13 @@ export default function PensionProjectionPage({ policyId, onBack }) {
       {loading && <p className="muted">Loading policy details...</p>}
       {notice && <p className="muted">{notice}</p>}
 
+      {/* Case actions: maturity options, missing documents and the final state. */}
+      {children}
+
+      <h2>Fund projection</h2>
+
       <div className="card">
-        <h2>Today</h2>
+        <h3>Today</h3>
         <div className="grid">
           <div className="stat">
             <span className="stat-label">Current fund value</span>
@@ -73,7 +78,7 @@ export default function PensionProjectionPage({ policyId, onBack }) {
       </div>
 
       <div className="card">
-        <h2>At retirement</h2>
+        <h3>At retirement</h3>
         <div className="grid">
           <div className="stat">
             <span className="stat-label">Years to maturity</span>
@@ -103,7 +108,7 @@ export default function PensionProjectionPage({ policyId, onBack }) {
       </div>
 
       <div className="card">
-        <h2>Year by year</h2>
+        <h3>Year by year</h3>
         <div className="table-wrap">
           <table>
             <thead>

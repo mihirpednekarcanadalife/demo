@@ -13,11 +13,12 @@ import org.springframework.transaction.PlatformTransactionManager;
  * Retirement journey batch job.
  *
  * <pre>
- * step1: maturityAssessmentStep -&gt; policyMaturityService.assessAllPolicies()
- * step2: ownerDetectionStep     -&gt; ownerDetectionService.detectOwners()
+ * step1: maturityAssessmentStep   -&gt; policyMaturityService.assessAllPolicies()
+ * step2: ownerDetectionStep       -&gt; ownerDetectionService.detectOwners()
+ * step3: maturityPackageEmailStep -&gt; maturityPackageEmailService.sendMaturityPackages()
  * </pre>
  *
- * <p>Both steps are idempotent, so the job is safe to run repeatedly on a schedule.</p>
+ * <p>All steps are idempotent, so the job is safe to run repeatedly on a schedule.</p>
  */
 @Configuration
 public class RetirementBatchConfig {
@@ -43,12 +44,23 @@ public class RetirementBatchConfig {
     }
 
     @Bean
+    public Step maturityPackageEmailStep(JobRepository jobRepository,
+                                         PlatformTransactionManager transactionManager,
+                                         MaturityPackageEmailTasklet maturityPackageEmailTasklet) {
+        return new StepBuilder("maturityPackageEmailStep", jobRepository)
+                .tasklet(maturityPackageEmailTasklet, transactionManager)
+                .build();
+    }
+
+    @Bean
     public Job retirementJourneyJob(JobRepository jobRepository,
                                     Step maturityAssessmentStep,
-                                    Step ownerDetectionStep) {
+                                    Step ownerDetectionStep,
+                                    Step maturityPackageEmailStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
                 .start(maturityAssessmentStep)
                 .next(ownerDetectionStep)
+                .next(maturityPackageEmailStep)
                 .build();
     }
 }

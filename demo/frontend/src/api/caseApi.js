@@ -33,3 +33,44 @@ export async function fetchCaseByPolicy(policyId) {
   const response = await fetch(`${API_BASE_URL}/by-policy/${encodeURIComponent(policyId)}`);
   return parseJson(response);
 }
+
+/** PUT /api/v1/cases/{caseId} - partial update, null fields are left unchanged. */
+export async function updateCase(caseId, payload) {
+  const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(caseId)}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  return parseJson(response);
+}
+
+/** Convenience helper for advancing a case to a new status. */
+export async function updateCaseStatus(caseId, caseStatus) {
+  return updateCase(caseId, { caseStatus });
+}
+
+/** GET /api/v1/cases/{caseId}/journey */
+export async function fetchCaseJourney(caseId) {
+  const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(caseId)}/journey`);
+  return parseJson(response);
+}
+
+/** POST /api/v1/cases/{caseId}/journey/maturity-option */
+export async function selectMaturityOption(caseId, maturityOption) {
+  const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(caseId)}/journey/maturity-option`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ maturityOption })
+  });
+  return parseJson(response);
+}
+
+/** POST /api/v1/cases/{caseId}/journey/documents */
+export async function uploadDocument(caseId, document, fileName) {
+  const response = await fetch(`${API_BASE_URL}/${encodeURIComponent(caseId)}/journey/documents`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ document, fileName })
+  });
+  return parseJson(response);
+}

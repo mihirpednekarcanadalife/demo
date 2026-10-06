@@ -376,45 +376,73 @@ select {
   color: #991b1b;
 }
 
-/* --- Customer portal --- */
-.login-card {
-  max-width: 420px;
+.badge-maturity-package-sent {
+  background: #e0f2fe;
+  color: #075985;
 }
 
-.login-card label {
-  margin-bottom: var(--space-md);
+.badge-awaiting-information {
+  background: #fef3c7;
+  color: #92400e;
 }
 
-.portal-header {
+.document-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.document-list li {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--cl-divider);
 }
 
-.policy-link {
-  color: var(--cl-red);
+.document-list li:last-child {
+  border-bottom: none;
+}
+
+/* --- Email preview --- */
+.email-preview {
+  max-width: 760px;
+}
+
+.email-headers {
+  margin: 0;
+}
+
+.email-headers > div {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: 0.25rem;
+}
+
+.email-headers dt {
+  min-width: 72px;
   font-weight: 700;
-  text-decoration: underline;
+  color: var(--cl-dark-grey);
 }
 
-.policy-link:hover {
-  color: var(--cl-red-hover);
+.email-headers dd {
+  margin: 0;
+  color: var(--cl-black);
 }
 
-.link-button {
-  background: transparent;
+.email-preview hr {
   border: none;
-  color: var(--cl-red);
-  font-weight: 700;
-  padding: 0;
-  margin-bottom: var(--space-md);
-  cursor: pointer;
+  border-top: 1px solid var(--cl-divider);
+  margin: var(--space-md) 0;
 }
 
-.link-button:hover:not(:disabled) {
-  background: transparent;
-  color: var(--cl-red-hover);
-  text-decoration: underline;
+.email-body ul {
+  margin: 0 0 var(--space-md);
+  padding-left: 1.25rem;
+  color: var(--cl-dark-grey);
+}
+
+.email-cta {
+  display: inline-block;
 }
